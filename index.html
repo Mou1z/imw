@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="/css/styles.css" />
+
+    <title>Is Max Winning?</title>
+  </head>
+  <body>
+    <div id="content-container">
+      <h1 id="imw-q"></h1>
+      <h2 id="imw-a"></h2>
+
+      <h4 id="ps-q"></h3>
+      <h4 id="ps-a"></h3>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      // imw_q -> is max winning, question
+      // imw_a -> is max winning, answer
+      const imw_q = document.querySelector('#imw-q');
+      const imw_a = document.querySelector('#imw-a');
+
+      // ps_q -> pitstops, question
+      // ps_a -> pitstops, answer
+      const ps_q = document.querySelector('#ps-q');
+      const ps_a = document.querySelector('#ps-a');
+      
+      let isWinning = null;
+
+      if(isWinning === null) {
+        imw_q.innerHTML = "Waiting for data...";
+      }
+
+      var socket = io();
+
+      socket.on('data', (data) => {
+        console.log(data);
+
+        if(data['incomingData'] === false) {
+          imw_q.innerHTML = "No Live Session!";
+          imw_a.innerHTML = "";
+          ps_q.innerHTML = "";
+          ps_a.innerHTML = "";
+        } else {
+          imw_q.innerHTML = "Is Max Winning?";
+          imw_a.innerHTML = data["isWinning"] ? "Yes" : "No";
+          ps_q.innerHTML = "Has he pitted yet?";
+          ps_a.innerHTML = data["pitStops"] > 0 ? "Yes" : "He hasn't pitted";
+        }
+      });
+    </script>
+    <footer>
+      <a href="http://x.com/ismaxwinning">@ismaxwinning</a>
+    </footer>
+  </body>
+</html>
