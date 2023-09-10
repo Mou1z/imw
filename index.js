@@ -36,61 +36,62 @@ async function connectwss(token, cookie) {
 			console.log('received %s', data);
             data = JSON.parse(data);
 
-            io.emit('data', {
-                incomingData: true,
-                isWinning: false,
-                pitStops: 1
-            });
+            // For testing purposes
+            // io.emit('data', {
+            //     incomingData: true,
+            //     isWinning: false,
+            //     pitStops: 1
+            // });
 
-            // if(Object.keys(data).length === 0 || !data.hasOwnProperty('R')) {
-            //     io.emit('data', { incomingData: false });
-            // } else {
-            //     const topThree = data['R']['TopThree'];
-            //     let topDriver = topThree['Lines'][0];
+            if(Object.keys(data).length === 0 || !data.hasOwnProperty('R')) {
+                io.emit('data', { incomingData: false });
+            } else {
+                const topThree = data['R']['TopThree'];
+                let topDriver = topThree['Lines'][0];
       
-            //     const timingData = data['R']['TimingData'];
-            //     const driversList = data['R']['DriverList'];
+                const timingData = data['R']['TimingData'];
+                const driversList = data['R']['DriverList'];
                 
-            //     const ourDriver = 'Max Verstappen';
-            //     let racingNumber = '';
-            //     let pitStops = 0;
-            //     let winning = false;
+                const ourDriver = 'Max Verstappen';
+                let racingNumber = '';
+                let pitStops = 0;
+                let winning = false;
       
-            //     Object.keys(driversList).every((number) => {
-            //         if(driversList[number]['FullName'].toLowerCase() === ourDriver.toLowerCase()) {
-            //             racingNumber = driversList[number]['RacingNumber'];
-            //             return false;
-            //         } 
-            //         return true;
-            //     });
-      
-                
-            //     Object.keys(timingData['Lines']).every((line) => {
-            //         if(timingData['Lines'][line]['RacingNumber'] === racingNumber) {
-            //             pitStops = timingData['Lines'][line]['NumberOfPitStops'];
-            //             return false;
-            //         }
-            //         return true;
-            //     });
+                Object.keys(driversList).every((number) => {
+                    if(driversList[number]['FullName'].toLowerCase() === ourDriver.toLowerCase()) {
+                        racingNumber = driversList[number]['RacingNumber'];
+                        return false;
+                    } 
+                    return true;
+                });
       
                 
-            //     winning = (
-            //         topDriver['RacingNumber'] === racingNumber && 
-            //         topDriver['FullName'].toLowerCase() === ourDriver.toLowerCase() 
-            //     );
+                Object.keys(timingData['Lines']).every((line) => {
+                    if(timingData['Lines'][line]['RacingNumber'] === racingNumber) {
+                        pitStops = timingData['Lines'][line]['NumberOfPitStops'];
+                        return false;
+                    }
+                    return true;
+                });
       
-            //     console.log(racingNumber);
-            //     console.log(pitStops);
-            //     console.log(winning);
+                
+                winning = (
+                    topDriver['RacingNumber'] === racingNumber && 
+                    topDriver['FullName'].toLowerCase() === ourDriver.toLowerCase() 
+                );
       
-            //     io.emit('data', {
-            //         incomingData: true,
-            //         isWinning: winning,
-            //         pitStops: pitStops
-            //     });
-            // }
+                console.log(racingNumber);
+                console.log(pitStops);
+                console.log(winning);
+      
+                io.emit('data', {
+                    incomingData: true,
+                    isWinning: winning,
+                    pitStops: pitStops
+                });
+            }
 
-            // io.emit('data', JSON.parse(data));
+            io.emit('data', JSON.parse(data));
 		});
 	});
 	return p
