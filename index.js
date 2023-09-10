@@ -36,7 +36,6 @@ async function connectwss(token, cookie) {
 			console.log('received %s', data);
             data = JSON.parse(data);
 
-            // For testing purposes
             // io.emit('data', {
             //     incomingData: true,
             //     isWinning: false,
@@ -90,8 +89,6 @@ async function connectwss(token, cookie) {
                     pitStops: pitStops
                 });
             }
-
-            io.emit('data', JSON.parse(data));
 		});
 	});
 	return p
