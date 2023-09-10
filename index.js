@@ -11,6 +11,11 @@ const io = new Server(server);
 
 app.use(express.static(__dirname + '/public'));
 
+let appData = {
+    onGoingSession: null,
+    sessionName: null
+};
+
 async function negotiate() {
 	const hub = encodeURIComponent(JSON.stringify([{name:"Streaming"}]));
 	const url = `https://livetiming.formula1.com/signalr/negotiate?connectionData=${hub}&clientProtocol=1.5`
@@ -36,15 +41,28 @@ async function connectwss(token, cookie) {
 			console.log('received %s', data);
             data = JSON.parse(data);
 
-            // io.emit('data', {
-            //     incomingData: true,
-            //     isWinning: false,
-            //     pitStops: 1
-            // });
+            if(Object.keys(data).length === 0) {
+                if(appData['onGoingSession'] === true || appData['onGoingSession'] === null) {
+                    appData['sessionName'] = "Waiting for data..";
+                    axios.get("https://ergast.com/api/f1/current/next.json")
+                    .then((response) => {
+                        let data = response.data;
+                        appData['sessionName'] = data['MRData']['RaceTable']['Races'][0]['raceName'];
+                        console.log('here');
+                    })
+                    .catch((error) => console.log(error));
+                }
 
-            if(Object.keys(data).length === 0 || !data.hasOwnProperty('R')) {
-                io.emit('data', { incomingData: false });
-            } else {
+                appData['onGoingSession'] = false;
+
+                io.emit('data', { 
+                    incomingData: false,
+                    sessionName: appData['sessionName']
+                });
+            } else if(data.hasOwnProperty('R')) {
+                appData['onGoingSession'] = true;
+                appData['sessionName'] = data['R']['SessionInfo']['Meeting']['Name'];
+
                 const topThree = data['R']['TopThree'];
                 let topDriver = topThree['Lines'][0];
       
@@ -86,7 +104,8 @@ async function connectwss(token, cookie) {
                 io.emit('data', {
                     incomingData: true,
                     isWinning: winning,
-                    pitStops: pitStops
+                    pitStops: pitStops,
+                    sessionName: appData['sessionName']
                 });
             }
 		});
@@ -106,7 +125,7 @@ async function main() {
 			{
 				"H": "Streaming",
 				"M": "Subscribe",
-				"A": [["DriverList", "TopThree", "TimingData"]],
+				"A": [["SessionInfo", "DriverList", "TopThree", "TimingData"]],
 				"I": 1
 			}
 		));

@@ -9,6 +9,8 @@
     <title>Is Max Winning?</title>
   </head>
   <body>
+    <div id="header">Session: </div>
+
     <div id="content-container">
       <h1 id="imw-q"></h1>
       <h2 id="imw-a"></h2>
@@ -17,8 +19,14 @@
       <h4 id="ps-a"></h3>
     </div>
 
+    <footer>
+      <a href="http://x.com/ismaxwinning">@ismaxwinning</a>
+    </footer>
+
     <script src="/socket.io/socket.io.js"></script>
     <script>
+      const eventName = document.querySelector('#header');
+      
       // imw_q -> is max winning, question
       // imw_a -> is max winning, answer
       const imw_q = document.querySelector('#imw-q');
@@ -45,16 +53,17 @@
           imw_a.innerHTML = "";
           ps_q.innerHTML = "";
           ps_a.innerHTML = "";
+
+          eventName.innerHTML = `Next Event: ${data['sessionName']}`;
         } else {
           imw_q.innerHTML = "Is Max Winning?";
           imw_a.innerHTML = data["isWinning"] ? "Yes" : "No";
           ps_q.innerHTML = "Has he pitted yet?";
           ps_a.innerHTML = data["pitStops"] > 0 ? "Yes" : "He hasn't pitted";
+
+          eventName.innerHTML = `Current Event: ${data['sessionName']}`;
         }
       });
     </script>
-    <footer>
-      <a href="http://x.com/ismaxwinning">@ismaxwinning</a>
-    </footer>
   </body>
 </html>

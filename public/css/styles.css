@@ -20,6 +20,11 @@ body {
     text-align: center;
 }
 
+#header {
+    position: absolute;
+    top: 1.75%;
+}
+
 footer {
     position: absolute;
     bottom: 1.75%;
