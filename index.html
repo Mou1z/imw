@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="stylesheet" type="text/css" href="/css/styles.css" />
 
     <title>Is Max Winning?</title>
@@ -20,7 +21,7 @@
     </div>
 
     <footer>
-      <a href="http://x.com/ismaxwinning">@ismaxwinning</a>
+      <a id="footer-link" href="https://x.com/ismaxwinning">@ismaxwinning</a>
     </footer>
 
     <script src="/socket.io/socket.io.js"></script>
@@ -46,22 +47,32 @@
       var socket = io();
 
       socket.on('data', (data) => {
-        console.log(data);
-
         if(data['incomingData'] === false) {
           imw_q.innerHTML = "No Live Session!";
           imw_a.innerHTML = "";
           ps_q.innerHTML = "";
           ps_a.innerHTML = "";
 
-          eventName.innerHTML = `Next Event: ${data['sessionName']}`;
+          eventName.innerHTML = `Next Event- ${data['sessionName']}`;
         } else {
           imw_q.innerHTML = "Is Max Winning?";
-          imw_a.innerHTML = data["isWinning"] ? "Yes" : "No";
+
+          if(data["isWinning"] === true) {
+            imw_a.innerHTML = "YES";
+          } else {
+            imw_a.innerHTML = "";
+            let link = document.createElement('a');
+            link.innerHTML = "NO";
+            link.style.color = '#EE0000';
+            link.style.textDecoration = 'none';
+            link.href = "https://f1tv.formula1.com/";
+            imw_a.append(link);
+          }
+          
           ps_q.innerHTML = "Has he pitted yet?";
           ps_a.innerHTML = data["pitStops"] > 0 ? "Yes" : "He hasn't pitted";
 
-          eventName.innerHTML = `Current Event: ${data['sessionName']}`;
+          eventName.innerHTML = `Current Event- ${data['sessionName']}`;
         }
       });
     </script>

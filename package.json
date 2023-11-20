@@ -4,7 +4,7 @@
   "description": "An app that checks if Max is winning.",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js --omit=dev",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
