@@ -79,8 +79,6 @@ async function connectwss(token, cookie) {
 		});
         
 		sock.on('message', (data) => {
-
-			console.log('received %s', data);
             data = JSON.parse(data);
 
             if(data.hasOwnProperty('R')) {
@@ -103,11 +101,13 @@ async function connectwss(token, cookie) {
                                 for(let i = 0; i < races.length; i++) {
                                     let raceTime = new Date(races[i]['date'] + ' ' + races[i]['time']);
                                     if(raceTime > now) {
-                                        console.log('>>>>>>>>>>>>>>>>>', races[i]['raceName']);
                                         newName = races[i]['raceName'];
                                         break;
                                     }
                                 }
+
+                                if(newName === '')
+                                    newName = 'Not Yet Announced';
         
                                 appData['sessionName'] = newName;   
                                 appData['onGoingSession'] = false;
@@ -122,10 +122,6 @@ async function connectwss(token, cookie) {
                         };
 
                         updateSessionName();
-                        
-
-                        
-
                     }
                 } else {
                     appData['onGoingSession'] = true;
